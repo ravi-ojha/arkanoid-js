@@ -2,6 +2,7 @@
 // Arkanoid game
 //
 // Author: delimitry
+// Modified: ravi-ojha
 //-----------------------------------------------------------------------------------------------------------
 
 function Paddle(x, y, width, height) {
@@ -29,11 +30,6 @@ function Ball(x, y, radius, dir, speed) {
 
 var BricksTypes = {
 	DEFAULT : 1,
-	ICE : 1,
-	WOOD : 2,
-	STONE : 3,
-	IRON : 4,
-	STEEL : 5
 };
 
 function Brick(x, y, width, height, type) {
@@ -44,7 +40,19 @@ function Brick(x, y, width, height, type) {
 	this.lifes = type;
 }
 
+var map = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+		   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+		   [1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1],
+		   [1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1],
+		   [1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1],
+		   [1, 1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1],
+		   [1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1],
+		   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+		   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+		  ]
+
 function Bricks(hor_num, vert_num, brick_width, brick_height) {
+
 	this.bricks = new Array();
 	for (var i = 0; i < vert_num; i++) {
 		this.bricks[i] = new Array();
@@ -65,8 +73,8 @@ function ArkanoidGame(canvas, context) {
 	var BALL_RADIUS = 3;
 	var BALL_DEFAULT_SPEED = 3;
 	var BALL_MAX_SPEED = 6;
-	var BRICK_WIDTH = 80;
-	var BRICK_HEIGHT = 35;
+	var BRICK_WIDTH = 19;
+	var BRICK_HEIGHT = 10;
 	var BRICK_SCORE = 100;
 
 	this.level = 0;
@@ -93,37 +101,13 @@ function ArkanoidGame(canvas, context) {
 	this.initLevel = function(level) {
 		switch (level) {
 			case 0:
-				this.bricks = new Bricks(8, 2, BRICK_WIDTH, BRICK_HEIGHT);
+				this.bricks = new Bricks(35, 9, BRICK_WIDTH, BRICK_HEIGHT);
 				for (var i = 0; i < this.bricks.bricks.length; i++) {
 					for (var j = 0; j < this.bricks.bricks[i].length; j++) {
-						this.bricks.bricks[i][j].lifes = BricksTypes.DEFAULT;
-					}
-				}
-				break;
-
-			case 1:
-				this.bricks = new Bricks(8, 2, BRICK_WIDTH, BRICK_HEIGHT);
-				for (var i = 0; i < this.bricks.bricks.length; i++) {
-					for (var j = 0; j < this.bricks.bricks[i].length; j++) {
-						this.bricks.bricks[i][j].lifes = BricksTypes.DEFAULT + i;
-					}
-				}
-				break;
-
-			case 2:
-				this.bricks = new Bricks(8, 4, BRICK_WIDTH, BRICK_HEIGHT);
-				for (var i = 0; i < this.bricks.bricks.length; i++) {
-					for (var j = 0; j < this.bricks.bricks[i].length; j++) {
-						this.bricks.bricks[i][j].lifes = BricksTypes.DEFAULT + i;
-					}
-				}
-				break;
-
-			case 3:
-				this.bricks = new Bricks(8, 5, BRICK_WIDTH, BRICK_HEIGHT);
-				for (var i = 0; i < this.bricks.bricks.length; i++) {
-					for (var j = 0; j < this.bricks.bricks[i].length; j++) {
-						this.bricks.bricks[i][j].lifes = BricksTypes.DEFAULT + i;
+						if(map[i][j])
+							this.bricks.bricks[i][j].lifes = BricksTypes.DEFAULT;
+						else
+							this.bricks.bricks[i][j].lifes = 0;
 					}
 				}
 				break;
@@ -136,7 +120,7 @@ function ArkanoidGame(canvas, context) {
 	this.drawBall = function() {
 		context.beginPath();
 		context.arc(this.ball.x, this.ball.y, this.ball.radius, 0, 2 * Math.PI, false);
-		context.fillStyle = 'yellow';
+		context.fillStyle = '#2eec74';
 		context.fill();
 	}
 
@@ -145,13 +129,8 @@ function ArkanoidGame(canvas, context) {
 			for (var j = 0; j < this.bricks.bricks[i].length; j++) {
 				if (this.bricks.bricks[i][j].lifes > 0) {
 					switch (this.bricks.bricks[i][j].lifes) {
-						case BricksTypes.ICE: context.fillStyle = 'rgba(220,220,255,0.9)'; break;
-						case BricksTypes.WOOD: context.fillStyle = 'rgb(245,155,25)'; break;
-						case BricksTypes.STONE: context.fillStyle = 'rgb(55,55,55)'; break;
-						case BricksTypes.IRON: context.fillStyle = 'rgb(25,25,85)'; break;
-						case BricksTypes.STEEL: context.fillStyle = 'rgb(15,225,255)'; break;
-						case BricksTypes.DEFAULT: context.fillStyle = 'rgba(220,220,255,0.9)'; break;
-						default: context.fillStyle = 'rgb(255,0,0)';
+						case BricksTypes.DEFAULT: context.fillStyle = '#ccc'; break;
+						default: context.fillStyle = '#2b3e51';
 					}
 					context.fillRect(this.bricks.bricks[i][j].x, this.bricks.bricks[i][j].y, this.bricks.bricks[i][j].width - 2, this.bricks.bricks[i][j].height - 2);
 				}
@@ -160,42 +139,42 @@ function ArkanoidGame(canvas, context) {
 	}
 
 	this.draw = function() {
-		context.fillStyle = 'rgb(0,10,0)';
+		context.fillStyle = '#2b3e51';
 		context.fillRect(0, 0, canvas.width, canvas.height);
 
 		this.drawBall();
 
 		// draw paddle
-		context.fillStyle = 'rgb(155,110,5)';
+		context.fillStyle = '#6cbef5';
 		context.fillRect(this.paddle.x, this.paddle.y, this.paddle.width, this.paddle.height);
 
 		this.drawBricks();
 
 		if (this.gamePaused && !this.gameWin && !this.gameOver) {
-			context.fillStyle = 'rgb(255,255,0)';
-			context.font = 'bold 20px Arial';
+			context.fillStyle = '#2eec74';
+			context.font = '20px Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New';
 			context.fillText('Pause', canvas.width / 2 - 30, canvas.height / 2);
 		}
 
 		if (this.gameOver) {
-			context.fillStyle = 'rgb(255,255,0)';
-			context.font = 'bold 20px Arial';
+			context.fillStyle = '#2eec74';
+			context.font = '20px Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New';
 			context.fillText('Game Over', canvas.width / 2 - 40, canvas.height / 2);
 		}
 
 		if (this.gameWin) {
-			context.fillStyle = 'rgb(255,255,0)';
-			context.font = 'bold 20px Arial';
+			context.fillStyle = '#2eec74';
+			context.font = '20px Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New';
 			context.fillText('You Win', canvas.width / 2 - 40, canvas.height / 2);
 		}
 
-		context.fillStyle = 'rgb(255,255,220)';
-		context.font = 'bold 15px Arial';
-		context.fillText('Score: ' + this.score, 5, 15);
+		context.fillStyle = '#fefefe';
+		context.font = '12px Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New';
+		context.fillText('Score: ' + this.score, 5, 300);
 
-		context.fillStyle = 'rgb(255,255,220)';
-		context.font = 'bold 15px Arial';
-		context.fillText('Lifes: ' + this.lifes, 5, 35);
+		context.fillStyle = '#fefefe';
+		context.font = '12px Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New';
+		context.fillText('Lives: ' + this.lifes, 5, 325);
 	}
 
 	this.update = function() {
@@ -401,7 +380,7 @@ function render() {
 function checkCanvasIsSupported() {
 	canvas = document.getElementById("gameCanvas");
 	canvas.width = 640;
-	canvas.height = 480;
+	canvas.height = 360;
 	canvas.style.cursor = "none";
 	if (canvas.getContext) {
 		context = canvas.getContext('2d');
@@ -416,7 +395,10 @@ function checkCanvasIsSupported() {
 }
 
 var KeyCodes = {
-	SPACE : 32
+	SPACE : 32,
+	LEFT: 37,
+	RIGHT: 39,
+	UP: 38,
 };
 
 document.onkeydown = function(event) {
@@ -430,15 +412,16 @@ document.onkeydown = function(event) {
 		case KeyCodes.SPACE:
 			arkanoidGame.togglePause();
 			break;
+		case KeyCodes.LEFT:
+			arkanoidGame.movePaddleLeft();
+			break;
+		case KeyCodes.RIGHT:
+			arkanoidGame.movePaddleRight();
+			break;
+		case KeyCodes.UP:
+			arkanoidGame.startGame();
+			break;
 		default:
 			break;
 	}
-}
-
-document.onmousemove = function(event) {
-	arkanoidGame.setPaddlePos(event.pageX);
-}
-
-document.onclick = function(){
-	arkanoidGame.startGame();
 }
